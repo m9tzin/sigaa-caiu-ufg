@@ -6,11 +6,11 @@ import type {
   Status,
 } from "./types";
 
-const SIGAA_URL = "https://sigaa.ufpb.br/sigaa/verTelaLogin.do";
-const PORTAL_URL = "https://sigaa.ufpb.br/publico/";
-const PORTAL_ORIGIN = "https://sigaa.ufpb.br";
+const SIGAA_URL = "https://sigaa.sistemas.ufg.br/sigaa/verTelaLogin.do";
+const PORTAL_URL = "https://sigaa.sistemas.ufg.br/publico/";
+const PORTAL_ORIGIN = "https://sigaa.sistemas.ufg.br";
 const BUNDLE_REGEX = /\/publico\/assets\/[a-zA-Z0-9._-]+\.js/;
-const LOGIN_FORM_URL = "https://sigaa.ufpb.br/sigaa/logon.jsf";
+const LOGIN_FORM_URL = "https://sigaa.sistemas.ufg.br/sigaa/logon.jsf";
 const USER_AGENT = "sigaa-caiu-monitor/1.0";
 
 const TIMEOUT_MS = 30_000;
