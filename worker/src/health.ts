@@ -7,11 +7,10 @@ import type {
 } from "./types";
 
 const SIGAA_URL = "https://sigaa.sistemas.ufg.br/sigaa/verTelaLogin.do";
-const PORTAL_URL = "https://sigaa.sistemas.ufg.br/publico/";
-const PORTAL_ORIGIN = "https://sigaa.sistemas.ufg.br";
-const BUNDLE_REGEX = /\/publico\/assets\/[a-zA-Z0-9._-]+\.js/;
-const LOGIN_FORM_URL = "https://sigaa.sistemas.ufg.br/sigaa/logon.jsf";
-const USER_AGENT = "sigaa-caiu-monitor/1.0";
+// UFG uses CAS/SSO for authentication — no public SPA portal like UFPB.
+// Layer 2 checks SSO availability; layer 3 verifies the CAS form fields.
+const SSO_LOGIN_URL = "https://sso.ufg.br/cas/login?locale=pt_BR&service=https%3A%2F%2Fsigaa.sistemas.ufg.br%2Fsigaa%2FverTelaLogin.do";
+const USER_AGENT = "sigaa-caiu-ufg-monitor/1.0";
 
 const TIMEOUT_MS = 30_000;
 const THRESHOLD_DEGRADED_MS = 10_000;
@@ -147,234 +146,71 @@ function determineReachabilityStatus(httpCode: number, responseTimeMs: number): 
   return "online";
 }
 
-// --- Layer 2: public portal SPA ---
+// --- Layer 2: SSO availability ---
+// UFG has no public SPA portal. Instead, verify the CAS/SSO service is reachable
+// and responding — students cannot log in if SSO is down even if SIGAA is up.
 
 async function checkPortal(): Promise<LayerResult> {
   const start = Date.now();
   try {
-    const res = await fetch(PORTAL_URL, {
+    const res = await fetch(SSO_LOGIN_URL, {
       redirect: "follow",
       signal: AbortSignal.timeout(TIMEOUT_MS),
       headers: { "User-Agent": USER_AGENT },
     });
 
-    if (res.status !== 200) return { status: "offline", error: `portal_http_${res.status}`, responseTimeMs: Date.now() - start };
+    if (res.status !== 200) return { status: "offline", error: `sso_http_${res.status}`, responseTimeMs: Date.now() - start };
 
     const body = await res.text();
 
-    if (!body.includes('id="root"')) {
-      return { status: "offline", error: "portal_html_missing_root", responseTimeMs: Date.now() - start };
-    }
-
-    const match = body.match(BUNDLE_REGEX);
-    if (!match) {
-      return { status: "offline", error: "portal_html_missing_bundle", responseTimeMs: Date.now() - start };
-    }
-
-    const bundleUrl = PORTAL_ORIGIN + match[0];
-    const bundleRes = await fetch(bundleUrl, {
-      method: "HEAD",
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-      headers: { "User-Agent": USER_AGENT },
-    });
-
-    // Some CDNs return 405/501 for HEAD — fall back to a ranged GET.
-    if (bundleRes.status !== 200) {
-      const fallback = await fetch(bundleUrl, {
-        method: "GET",
-        signal: AbortSignal.timeout(TIMEOUT_MS),
-        headers: { "User-Agent": USER_AGENT, Range: "bytes=0-0" },
-      });
-      if (fallback.status !== 200 && fallback.status !== 206) {
-        return { status: "offline", error: `portal_bundle_http_${fallback.status}`, responseTimeMs: Date.now() - start };
-      }
+    if (!body.includes('name="username"')) {
+      return { status: "offline", error: "sso_missing_username_field", responseTimeMs: Date.now() - start };
     }
 
     return { status: "online", error: null, responseTimeMs: Date.now() - start };
   } catch (err) {
     const message = err instanceof Error ? err.message : "unknown";
-    return { status: "offline", error: `portal_fetch_error: ${message}`, responseTimeMs: Date.now() - start };
+    return { status: "offline", error: `sso_fetch_error: ${message}`, responseTimeMs: Date.now() - start };
   }
 }
 
-// --- Layer 3: JSF login form renders ---
+// --- Layer 3: CAS login form fields ---
+// Verify the SSO form renders all required fields (username, password, execution token).
+// A missing execution token means CAS is degraded and cannot issue session tickets.
 
 async function checkLoginForm(): Promise<LayerResult> {
   const start = Date.now();
   try {
-    const res = await fetch(LOGIN_FORM_URL, {
+    const res = await fetch(SSO_LOGIN_URL, {
       redirect: "follow",
       signal: AbortSignal.timeout(TIMEOUT_MS),
       headers: { "User-Agent": USER_AGENT },
     });
 
-    if (res.status !== 200) return { status: "offline", error: `login_form_http_${res.status}`, responseTimeMs: Date.now() - start };
+    if (res.status !== 200) return { status: "offline", error: `sso_form_http_${res.status}`, responseTimeMs: Date.now() - start };
 
     const body = await res.text();
 
-    if (!body.includes('name="javax.faces.ViewState"')) {
-      return { status: "offline", error: "login_form_missing_viewstate", responseTimeMs: Date.now() - start };
+    if (!body.includes('name="username"') || !body.includes('name="password"')) {
+      return { status: "offline", error: "sso_form_missing_credentials_fields", responseTimeMs: Date.now() - start };
     }
 
-    if (!body.includes('name="form:login"') || !body.includes('name="form:senha"')) {
-      return { status: "offline", error: "login_form_missing_inputs", responseTimeMs: Date.now() - start };
-    }
-
-    if (!body.includes('action="/sigaa/logon.jsf')) {
-      return { status: "offline", error: "login_form_wrong_action", responseTimeMs: Date.now() - start };
+    if (!body.includes('name="execution"')) {
+      return { status: "offline", error: "sso_form_missing_execution_token", responseTimeMs: Date.now() - start };
     }
 
     return { status: "online", error: null, responseTimeMs: Date.now() - start };
   } catch (err) {
     const message = err instanceof Error ? err.message : "unknown";
-    return { status: "offline", error: `login_form_fetch_error: ${message}`, responseTimeMs: Date.now() - start };
+    return { status: "offline", error: `sso_form_fetch_error: ${message}`, responseTimeMs: Date.now() - start };
   }
 }
 
-// --- Layer 4: end-to-end login with real credentials ---
-
-async function checkLoginE2E(user: string, pass: string): Promise<LayerResult> {
-  const start = Date.now();
-  try {
-    // Step 1: bogus login — should be rejected fast. A slow rejection
-    // signals auth-backend stress even if it's technically alive.
-    const bogusResult = await attemptLogin("sigaa_monitor_bogus_" + Date.now(), "wrong_password_xyz");
-    if (bogusResult.error === "prelogin_failed") {
-      return { status: "offline", error: `e2e_prelogin_http_${bogusResult.detail}`, responseTimeMs: Date.now() - start };
-    }
-    if (bogusResult.error === "prelogin_missing_viewstate") {
-      return { status: "offline", error: "e2e_missing_viewstate", responseTimeMs: Date.now() - start };
-    }
-    if (bogusResult.error === "prelogin_missing_action") {
-      return { status: "offline", error: "e2e_missing_action", responseTimeMs: Date.now() - start };
-    }
-    if (bogusResult.outcome !== "rejected") {
-      return { status: "offline", error: `e2e_bogus_unexpected: ${bogusResult.outcome}`, responseTimeMs: Date.now() - start };
-    }
-    if (bogusResult.durationMs > THRESHOLD_DEGRADED_MS) {
-      return { status: "degraded", error: `e2e_bogus_login_slow_${bogusResult.durationMs}ms`, responseTimeMs: Date.now() - start };
-    }
-
-    // Step 2: real login — should succeed.
-    const realResult = await attemptLogin(user, pass);
-    const totalMs = Date.now() - start;
-    if (realResult.outcome === "success") {
-      return { status: "online", error: null, responseTimeMs: totalMs };
-    }
-    if (realResult.outcome === "rejected") {
-      return { status: "offline", error: "e2e_login_rejected", responseTimeMs: totalMs };
-    }
-    return { status: "offline", error: `e2e_login_${realResult.outcome}`, responseTimeMs: totalMs };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "unknown";
-    return { status: "offline", error: `e2e_login_fetch_error: ${message}`, responseTimeMs: Date.now() - start };
-  }
-}
-
-interface LoginAttempt {
-  outcome: "success" | "rejected" | string;
-  durationMs: number;
-  error?: string;
-  detail?: string;
-}
-
-async function attemptLogin(user: string, pass: string): Promise<LoginAttempt> {
-  const start = Date.now();
-
-  // GET login page for a fresh session.
-  const getRes = await fetch(LOGIN_FORM_URL, {
-    redirect: "follow",
-    signal: AbortSignal.timeout(TIMEOUT_MS),
-    headers: { "User-Agent": USER_AGENT },
-  });
-
-  if (getRes.status !== 200) {
-    return { outcome: "prelogin_failed", durationMs: Date.now() - start, error: "prelogin_failed", detail: String(getRes.status) };
-  }
-
-  const loginHtml = await getRes.text();
-  const viewStateMatch = loginHtml.match(
-    /name="javax\.faces\.ViewState"[^>]*value="([^"]+)"/
-  );
-  if (!viewStateMatch) {
-    return { outcome: "prelogin_missing_viewstate", durationMs: Date.now() - start, error: "prelogin_missing_viewstate" };
-  }
-
-  const actionMatch = loginHtml.match(
-    /action="(\/sigaa\/logon\.jsf[^"]*)"/
-  );
-  if (!actionMatch) {
-    return { outcome: "prelogin_missing_action", durationMs: Date.now() - start, error: "prelogin_missing_action" };
-  }
-
-  const postUrl = PORTAL_ORIGIN + actionMatch[1];
-  const setCookies = getSetCookieHeaders(getRes);
-  const cookieHeader = buildCookieHeader(setCookies);
-
-  const body = new URLSearchParams({
-    form: "form",
-    "form:width": "1920",
-    "form:height": "1080",
-    "form:login": user,
-    "form:senha": pass,
-    "form:entrar": "Entrar",
-    "javax.faces.ViewState": viewStateMatch[1],
-  });
-
-  const postRes = await fetch(postUrl, {
-    method: "POST",
-    redirect: "manual",
-    signal: AbortSignal.timeout(TIMEOUT_MS),
-    headers: {
-      "User-Agent": USER_AGENT,
-      "Content-Type": "application/x-www-form-urlencoded",
-      Referer: LOGIN_FORM_URL,
-      ...(cookieHeader ? { Cookie: cookieHeader } : {}),
-    },
-    body: body.toString(),
-  });
-
-  const durationMs = Date.now() - start;
-
-  // 302 to discente portal = success.
-  if (postRes.status === 302) {
-    const location = postRes.headers.get("location") || "";
-    if (location.includes("/portal/discente") || location.includes("/portais/discente")) {
-      return { outcome: "success", durationMs };
-    }
-    const safeLoc = location.split(/[;?]/)[0].slice(0, 120);
-    return { outcome: `unexpected_redirect_${safeLoc}`, durationMs };
-  }
-
-  // 200 = stayed on login page.
-  if (postRes.status === 200) {
-    const respBody = await postRes.text();
-    // Check for rejection message (tolerant of encoding variants).
-    if (respBody.includes("inv&#225;lidos") || respBody.includes("inválidos")) {
-      return { outcome: "rejected", durationMs };
-    }
-    // Fallback: if the login form is still present, treat as rejection even
-    // if SIGAA rewords the error message.
-    if (respBody.includes('name="form:login"') && respBody.includes('name="form:senha"')) {
-      return { outcome: "rejected", durationMs };
-    }
-    return { outcome: "unexpected_200", durationMs };
-  }
-
-  return { outcome: `unexpected_http_${postRes.status}`, durationMs };
-}
-
-function getSetCookieHeaders(res: Response): string[] {
-  // Workers doesn't expose getSetCookie(); fall back to the concatenated header.
-  // SIGAA sets plain session cookies without internal commas, so splitting is safe.
-  const raw = res.headers.get("set-cookie");
-  if (!raw) return [];
-  return raw.split(/,\s*(?=[A-Za-z0-9_-]+=)/);
-}
-
-function buildCookieHeader(setCookies: string[]): string {
-  const pairs = setCookies.map((c) => c.split(";")[0].trim()).filter(Boolean);
-  return pairs.join("; ");
+// --- Layer 4: end-to-end login ---
+// UFG's CAS enforces reCAPTCHA, making automated login impossible.
+// This layer is always skipped — credentials are never set for UFG.
+async function checkLoginE2E(_user: string, _pass: string): Promise<LayerResult> {
+  return skipped();
 }
 
 // --- Helpers ---
