@@ -26,7 +26,7 @@ export async function notifyIfNeeded(
         `Tempo de resposta: ${result.responseTimeMs}ms\n` +
         layerSummary(result) +
         "\n\n" +
-        `[Ver status](https://sigaacaiu.com)`
+        `[Ver status](https://ufg.sigaacaiu.com)`
     );
   }
 
@@ -40,7 +40,7 @@ export async function notifyIfNeeded(
           `Tempo de resposta: ${result.responseTimeMs}ms\n` +
           layerSummary(result) +
           "\n\n" +
-          `[Ver status](https://sigaacaiu.com)`
+          `[Ver status](https://ufg.sigaacaiu.com)`
       );
     }
     // If no open incident, it was just a single flap — ignore

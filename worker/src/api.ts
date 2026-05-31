@@ -134,7 +134,7 @@ const DOCS_HTML = `<!DOCTYPE html>
 </head>
 <body>
 <h1>SIGAA Caiu? API</h1>
-<p class="sub">API publica do monitor de status do SIGAA da UFPB. Sem autenticacao.<br><a href="https://sigaacaiu.com">sigaacaiu.com</a> · <a href="https://github.com/trindadetiago/sigaa-caiu">GitHub</a></p>
+<p class="sub">API publica do monitor de status do SIGAA da UFG. Sem autenticacao.<br><a href="https://ufg.sigaacaiu.com">ufg.sigaacaiu.com</a> · <a href="https://github.com/m9tzin/sigaa-caiu-ufg">GitHub</a></p>
 
 <h2><span class="method">GET</span> <code>/api/status</code></h2>
 <div class="endpoint">
@@ -221,7 +221,7 @@ const DOCS_HTML = `<!DOCTYPE html>
 </div>
 
 <footer>
-  Verifica o SIGAA a cada 3 minutos com 4 camadas de verificacao · <a href="https://github.com/trindadetiago/sigaa-caiu">GitHub</a>
+  Verifica o SIGAA da UFG a cada 3 minutos com 4 camadas de verificacao · <a href="https://github.com/m9tzin/sigaa-caiu-ufg">GitHub</a>
 </footer>
 </body>
 </html>`;
