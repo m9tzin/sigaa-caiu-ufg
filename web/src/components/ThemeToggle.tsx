@@ -39,7 +39,7 @@ export function ThemeToggle() {
           className="absolute inset-0 flex items-center text-xs font-medium tracking-wide transition-transform duration-300 ease-in-out"
           style={{ transform: isSigaa ? "translateY(-110%)" : "translateY(0%)" }}
         >
-          Tema Moderno
+          Tema Default
         </span>
         <span
           className="absolute inset-0 flex items-center text-xs font-medium tracking-wide transition-transform duration-300 ease-in-out"
