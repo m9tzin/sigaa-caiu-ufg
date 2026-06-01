@@ -16,127 +16,58 @@ function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// "O SIGAA caiu?" → Não! (ta online)
+// prettier-ignore
 const ONLINE_RESPONSES = [
-  { emoji: "👍", text: "Nao!", sub: "Milagrosamente funcionando." },
-  { emoji: "👍", text: "Nao, ta no ar!", sub: "Aproveita enquanto dura." },
-  { emoji: "🎉", text: "Nao!", sub: "Inacreditavel, mas ta funcionando." },
-  { emoji: "👍", text: "Nao, pode ir!", sub: "Corre antes que caia." },
-  { emoji: "🙏", text: "Nao!", sub: "Gracas a Deus e a CERCOMP." },
-  { emoji: "👍", text: "Nao!", sub: "Nao, voce nao ta sonhando." },
-
-  /* World Cup Responses */
-  {
-    emoji: "🇧🇷⚽",
-    text: "Nao, ta firme!",
-    sub: "Aguentou o gol, o VAR e a revisao.",
-  },
+  { emoji: "👍",    text: "Nao!",             sub: "Milagrosamente funcionando." },
+  { emoji: "👍",    text: "Nao, ta no ar!",   sub: "Aproveita enquanto dura." },
+  { emoji: "🎉",    text: "Nao!",             sub: "Inacreditavel, mas ta funcionando." },
+  { emoji: "👍",    text: "Nao, pode ir!",    sub: "Corre antes que caia." },
+  { emoji: "🙏",    text: "Nao!",             sub: "Gracas a Deus e a CERCOMP." },
+  { emoji: "👍",    text: "Nao!",             sub: "Nao, voce nao ta sonhando." },
+  /* World Cup */
+  { emoji: "🇧🇷⚽", text: "Nao, ta firme!",   sub: "Aguentou o gol, o VAR e a revisao." },
 ];
 
-// "O SIGAA caiu?" → Ainda não, mas ta lento...
+// prettier-ignore
 const SLOW_RESPONSES = [
-  {
-    emoji: "🐌",
-    text: "Ainda nao, mas...",
-    sub: "Ta taaao lento que ja ja cai...",
-  },
-  { emoji: "😮‍💨", text: "Nao, mas quase", sub: "Ta mais lento que fila do RU." },
-  {
-    emoji: "🐢",
-    text: "Mais ou menos",
-    sub: "Ta funcionando em camara lenta.",
-  },
-  { emoji: "⏳", text: "Nao... ainda", sub: "Pega um cafe enquanto carrega." },
-  {
-    emoji: "🦥",
-    text: "Nao, mas ta arrastando",
-    sub: "Mais lento que matricula em periodo.",
-  },
-
-  /* World Cup Responses */
-  {
-    emoji: "🇧🇷",
-    text: "Nao, mas ta na torcida",
-    sub: "Um olho no jogo, outro no sistema.",
-  },
+  { emoji: "🐌",  text: "Ainda nao, mas...",    sub: "Ta taaao lento que ja ja cai..." },
+  { emoji: "😮‍💨", text: "Nao, mas quase",       sub: "Ta mais lento que fila do RU." },
+  { emoji: "🐢",  text: "Mais ou menos",         sub: "Ta funcionando em camara lenta." },
+  { emoji: "⏳",  text: "Nao... ainda",          sub: "Pega um cafe enquanto carrega." },
+  { emoji: "🦥",  text: "Nao, mas ta arrastando",sub: "Mais lento que matricula em periodo." },
+  /* World Cup */
+  { emoji: "🇧🇷", text: "Nao, mas ta na torcida",sub: "Um olho no jogo, outro no sistema." },
 ];
 
-// "O SIGAA caiu?" → Sim!
+// prettier-ignore
 const DOWN_RESPONSES = [
-  {
-    emoji: "👎",
-    text: "Sim, caiu",
-    sub: "F no chat. Vai tomar um cafe e volta depois.",
-  },
-  { emoji: "💀", text: "Sim, morreu", sub: "Descanse em paz, SIGAA." },
-  { emoji: "👎", text: "Sim", sub: "Surpresa de ninguem." },
-  { emoji: "😭", text: "Sim...", sub: "Era previsivel, ne?" },
-  {
-    emoji: "🪦",
-    text: "Sim, foi de base",
-    sub: "Causa da morte: ser o SIGAA.",
-  },
-  { emoji: "📚", text: "Caiu!", sub: "Deve estar fazendo prova" },
-
-  /* World Cup Responses */
-  {
-    emoji: "🇧🇷",
-    text: "Sim, foi ver o jogo!",
-    sub: "O SIGAA foi assistir o Brasil jogar. Volta depois do apito final.",
-  },
-  {
-    emoji: "🎊🇧🇷",
-    text: "Caiu de emocao!",
-    sub: "Nao segurou o gol e foi junto. Volta quando se recuperar.",
-  },
+  { emoji: "👎",    text: "Sim, caiu",         sub: "F no chat. Vai tomar um cafe e volta depois." },
+  { emoji: "💀",    text: "Sim, morreu",        sub: "Descanse em paz, SIGAA." },
+  { emoji: "👎",    text: "Sim",                sub: "Surpresa de ninguem." },
+  { emoji: "😭",    text: "Sim...",             sub: "Era previsivel, ne?" },
+  { emoji: "🪦",    text: "Sim, foi de base",   sub: "Causa da morte: ser o SIGAA." },
+  { emoji: "📚",    text: "Caiu!",              sub: "Deve estar fazendo prova." },
+  /* World Cup */
+  { emoji: "🇧🇷",   text: "Sim, foi ver o jogo!", sub: "O SIGAA foi assistir o Brasil jogar. Volta depois do apito final." },
+  { emoji: "🎊🇧🇷", text: "Caiu de emocao!",    sub: "Nao segurou o gol e foi junto. Volta quando se recuperar." },
 ];
 
+// prettier-ignore
 const CHECKING_RESPONSES = [
-  {
-    emoji: "🤔",
-    text: "Hmm...",
-    sub: "Parece que oscilou. Verificando se caiu mesmo...",
-  },
-  {
-    emoji: "👀",
-    text: "Calma ai...",
-    sub: "To olhando, parece que deu uma tremida.",
-  },
-  { emoji: "🔍", text: "Investigando...", sub: "Pode ter sido so um soluço." },
-  {
-    emoji: "🧐",
-    text: "Curioso... ",
-    sub: "Agora ha pouco eu estava no reCAPTCHA",
-  },
-  {
-    emoji: "😅",
-    text: "Espera um pouco...",
-    sub: "Ele pode estar preparando uma pegadinha",
-  },
+  { emoji: "🤔", text: "Hmm...",            sub: "Parece que oscilou. Verificando se caiu mesmo..." },
+  { emoji: "👀", text: "Calma ai...",        sub: "To olhando, parece que deu uma tremida." },
+  { emoji: "🔍", text: "Investigando...",    sub: "Pode ter sido so um soluço." },
+  { emoji: "🧐", text: "Curioso...",         sub: "Agora ha pouco eu estava no reCAPTCHA." },
+  { emoji: "😅", text: "Espera um pouco...", sub: "Ele pode estar preparando uma pegadinha." },
 ];
 
+// prettier-ignore
 const RECOVERING_RESPONSES = [
-  {
-    emoji: "🤞",
-    text: "Parece que voltou",
-    sub: "Mas nao confia nao, caiu agora pouco.",
-  },
-  {
-    emoji: "👀",
-    text: "Voltou... sera?",
-    sub: "Ainda ta quente, fica de olho.",
-  },
-  {
-    emoji: "😅",
-    text: "Voltou, mas...",
-    sub: "Acabou de cair. Nao bota muita fe nao.",
-  },
-  {
-    emoji: "⚠️",
-    text: "Ta no ar de novo",
-    sub: "Caiu faz pouco, pode oscilar ainda.",
-  },
-  { emoji: "👻", text: "Surpresa!", sub: "Era so pra passar um susto rsrs." },
+  { emoji: "🤞",  text: "Parece que voltou", sub: "Mas nao confia nao, caiu agora pouco." },
+  { emoji: "👀",  text: "Voltou... sera?",   sub: "Ainda ta quente, fica de olho." },
+  { emoji: "😅",  text: "Voltou, mas...",    sub: "Acabou de cair. Nao bota muita fe nao." },
+  { emoji: "⚠️",  text: "Ta no ar de novo",  sub: "Caiu faz pouco, pode oscilar ainda." },
+  { emoji: "👻",  text: "Surpresa!",         sub: "Era so pra passar um susto rsrs." },
 ];
 
 const STATUS_COLORS = {
