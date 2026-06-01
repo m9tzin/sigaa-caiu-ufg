@@ -80,9 +80,7 @@ export function UptimeBars({ history, stats, incidents }: Props) {
   const mutedClass = isSigaa ? "text-sigaa-muted" : "text-neutral-500";
   const labelClass = isSigaa ? "text-sigaa-muted" : "text-neutral-600";
 
-  const emptyBarClass = isSigaa
-    ? "bg-sigaa-background border border-sigaa-border-default"
-    : "bg-neutral-200";
+  const emptyBarClass = "bg-neutral-200";
 
   const barColors = {
     online: "bg-green-500",
