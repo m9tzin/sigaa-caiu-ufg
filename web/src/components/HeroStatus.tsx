@@ -26,49 +26,116 @@ const ONLINE_RESPONSES = [
   { emoji: "👍", text: "Nao!", sub: "Nao, voce nao ta sonhando." },
 
   /* World Cup Responses */
-  { emoji: "🇧🇷⚽", text: "Nao, ta firme!", sub: "Aguentou o gol, o VAR e a revisao." },
+  {
+    emoji: "🇧🇷⚽",
+    text: "Nao, ta firme!",
+    sub: "Aguentou o gol, o VAR e a revisao.",
+  },
 ];
 
 // "O SIGAA caiu?" → Ainda não, mas ta lento...
 const SLOW_RESPONSES = [
-  { emoji: "🐌", text: "Ainda nao, mas...", sub: "Ta taaao lento que ja ja cai..." },
+  {
+    emoji: "🐌",
+    text: "Ainda nao, mas...",
+    sub: "Ta taaao lento que ja ja cai...",
+  },
   { emoji: "😮‍💨", text: "Nao, mas quase", sub: "Ta mais lento que fila do RU." },
-  { emoji: "🐢", text: "Mais ou menos", sub: "Ta funcionando em camara lenta." },
+  {
+    emoji: "🐢",
+    text: "Mais ou menos",
+    sub: "Ta funcionando em camara lenta.",
+  },
   { emoji: "⏳", text: "Nao... ainda", sub: "Pega um cafe enquanto carrega." },
-  { emoji: "🦥", text: "Nao, mas ta arrastando", sub: "Mais lento que matricula em periodo." },
-  { emoji: "🍜", text: "Quase...", sub: "Foi so pegar marmita no RU" },
+  {
+    emoji: "🦥",
+    text: "Nao, mas ta arrastando",
+    sub: "Mais lento que matricula em periodo.",
+  },
 
   /* World Cup Responses */
-  { emoji: "🇧🇷", text: "Nao, mas ta na torcida", sub: "Um olho no jogo, outro no sistema." },
+  {
+    emoji: "🇧🇷",
+    text: "Nao, mas ta na torcida",
+    sub: "Um olho no jogo, outro no sistema.",
+  },
 ];
 
 // "O SIGAA caiu?" → Sim!
 const DOWN_RESPONSES = [
-  { emoji: "👎", text: "Sim, caiu", sub: "F no chat. Vai tomar um cafe e volta depois." },
+  {
+    emoji: "👎",
+    text: "Sim, caiu",
+    sub: "F no chat. Vai tomar um cafe e volta depois.",
+  },
   { emoji: "💀", text: "Sim, morreu", sub: "Descanse em paz, SIGAA." },
   { emoji: "👎", text: "Sim", sub: "Surpresa de ninguem." },
   { emoji: "😭", text: "Sim...", sub: "Era previsivel, ne?" },
-  { emoji: "🪦", text: "Sim, foi de base", sub: "Causa da morte: ser o SIGAA." },
+  {
+    emoji: "🪦",
+    text: "Sim, foi de base",
+    sub: "Causa da morte: ser o SIGAA.",
+  },
   { emoji: "📚", text: "Caiu!", sub: "Deve estar fazendo prova" },
 
   /* World Cup Responses */
-  { emoji: "🇧🇷", text: "Sim, foi ver o jogo!", sub: "O SIGAA foi assistir o Brasil jogar. Volta depois do apito final." },
-  { emoji: "🎊🇧🇷", text: "Caiu de emocao!", sub: "Nao segurou o gol e foi junto. Volta quando se recuperar." },
+  {
+    emoji: "🇧🇷",
+    text: "Sim, foi ver o jogo!",
+    sub: "O SIGAA foi assistir o Brasil jogar. Volta depois do apito final.",
+  },
+  {
+    emoji: "🎊🇧🇷",
+    text: "Caiu de emocao!",
+    sub: "Nao segurou o gol e foi junto. Volta quando se recuperar.",
+  },
 ];
 
 const CHECKING_RESPONSES = [
-  { emoji: "🤔", text: "Hmm...", sub: "Parece que oscilou. Verificando se caiu mesmo..." },
-  { emoji: "👀", text: "Calma ai...", sub: "To olhando, parece que deu uma tremida." },
+  {
+    emoji: "🤔",
+    text: "Hmm...",
+    sub: "Parece que oscilou. Verificando se caiu mesmo...",
+  },
+  {
+    emoji: "👀",
+    text: "Calma ai...",
+    sub: "To olhando, parece que deu uma tremida.",
+  },
   { emoji: "🔍", text: "Investigando...", sub: "Pode ter sido so um soluço." },
-  { emoji: "🧐", text: "Curioso... ", sub: "Agora ha pouco eu estava no reCAPTCHA" },
-  { emoji: "😅", text: "Espera um pouco...", sub: "Ele pode estar preparando uma pegadinha" },
+  {
+    emoji: "🧐",
+    text: "Curioso... ",
+    sub: "Agora ha pouco eu estava no reCAPTCHA",
+  },
+  {
+    emoji: "😅",
+    text: "Espera um pouco...",
+    sub: "Ele pode estar preparando uma pegadinha",
+  },
 ];
 
 const RECOVERING_RESPONSES = [
-  { emoji: "🤞", text: "Parece que voltou", sub: "Mas nao confia nao, caiu agora pouco." },
-  { emoji: "👀", text: "Voltou... sera?", sub: "Ainda ta quente, fica de olho." },
-  { emoji: "😅", text: "Voltou, mas...", sub: "Acabou de cair. Nao bota muita fe nao." },
-  { emoji: "⚠️", text: "Ta no ar de novo", sub: "Caiu faz pouco, pode oscilar ainda." },
+  {
+    emoji: "🤞",
+    text: "Parece que voltou",
+    sub: "Mas nao confia nao, caiu agora pouco.",
+  },
+  {
+    emoji: "👀",
+    text: "Voltou... sera?",
+    sub: "Ainda ta quente, fica de olho.",
+  },
+  {
+    emoji: "😅",
+    text: "Voltou, mas...",
+    sub: "Acabou de cair. Nao bota muita fe nao.",
+  },
+  {
+    emoji: "⚠️",
+    text: "Ta no ar de novo",
+    sub: "Caiu faz pouco, pode oscilar ainda.",
+  },
   { emoji: "👻", text: "Surpresa!", sub: "Era so pra passar um susto rsrs." },
 ];
 
@@ -79,7 +146,12 @@ const STATUS_COLORS = {
   muted: "#666666",
 };
 
-export function HeroStatus({ data, error, daysSinceLastIncident, incidents }: Props) {
+export function HeroStatus({
+  data,
+  error,
+  daysSinceLastIncident,
+  incidents,
+}: Props) {
   const { theme } = useTheme();
 
   const recentlyRecovered = useMemo(() => {
@@ -103,7 +175,7 @@ export function HeroStatus({ data, error, daysSinceLastIncident, incidents }: Pr
     if (isChecking) return pickRandom(CHECKING_RESPONSES);
     if (recentlyRecovered) return pickRandom(RECOVERING_RESPONSES);
     return pickRandom(ONLINE_RESPONSES);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.status, data?.confirmed, error, recentlyRecovered]);
 
   const statusColor =
@@ -114,17 +186,29 @@ export function HeroStatus({ data, error, daysSinceLastIncident, incidents }: Pr
         : "text-green-500";
 
   const institutionalStatus = useMemo(() => {
-    if (error) return { label: "ERRO DE COMUNICAÇÃO", color: STATUS_COLORS.offline };
-    if (!data || !data.lastCheck) return { label: "AGUARDANDO DADOS...", color: STATUS_COLORS.muted };
+    if (error)
+      return { label: "ERRO DE COMUNICAÇÃO", color: STATUS_COLORS.offline };
+    if (!data || !data.lastCheck)
+      return { label: "AGUARDANDO DADOS...", color: STATUS_COLORS.muted };
 
     const isDown = data.status === "offline" && data.confirmed;
     const isSlow = data.status === "degraded";
     const isChecking = data.status === "offline" && !data.confirmed;
 
-    if (isDown) return { label: "SISTEMA INDISPONÍVEL", color: STATUS_COLORS.offline };
-    if (isSlow) return { label: "SISTEMA LENTO / DEGRADADO", color: STATUS_COLORS.degraded };
-    if (isChecking) return { label: "VERIFICANDO INSTABILIDADE...", color: STATUS_COLORS.degraded };
-    if (recentlyRecovered) return { label: "SISTEMA EM RECUPERAÇÃO", color: STATUS_COLORS.degraded };
+    if (isDown)
+      return { label: "SISTEMA INDISPONÍVEL", color: STATUS_COLORS.offline };
+    if (isSlow)
+      return {
+        label: "SISTEMA LENTO / DEGRADADO",
+        color: STATUS_COLORS.degraded,
+      };
+    if (isChecking)
+      return {
+        label: "VERIFICANDO INSTABILIDADE...",
+        color: STATUS_COLORS.degraded,
+      };
+    if (recentlyRecovered)
+      return { label: "SISTEMA EM RECUPERAÇÃO", color: STATUS_COLORS.degraded };
     return { label: "SISTEMA OPERACIONAL", color: STATUS_COLORS.online };
   }, [data, error, recentlyRecovered]);
 
@@ -157,14 +241,20 @@ export function HeroStatus({ data, error, daysSinceLastIncident, incidents }: Pr
             <div className="mb-8 p-4 border border-sigaa-border-default bg-sigaa-background w-full rounded-sm">
               <div className="text-3xl mb-2">{response.emoji}</div>
               <div className="font-bold text-sigaa-text">{response.text}</div>
-              <div className="text-sm text-sigaa-muted mt-1">{response.sub}</div>
+              <div className="text-sm text-sigaa-muted mt-1">
+                {response.sub}
+              </div>
             </div>
           )}
 
           {error && !response && (
             <div className="mb-8 p-4 border border-sigaa-border-default bg-sigaa-background w-full rounded-sm">
-              <div className="font-bold text-sigaa-text">Erro ao conectar com o monitor.</div>
-              <div className="text-sm text-sigaa-muted mt-1">Tentando novamente em breve...</div>
+              <div className="font-bold text-sigaa-text">
+                Erro ao conectar com o monitor.
+              </div>
+              <div className="text-sm text-sigaa-muted mt-1">
+                Tentando novamente em breve...
+              </div>
             </div>
           )}
 
@@ -173,19 +263,25 @@ export function HeroStatus({ data, error, daysSinceLastIncident, incidents }: Pr
               <div className="border border-sigaa-border-default px-3 py-1.5 bg-sigaa-background rounded-sm">
                 Última verificação: {timeAgo(data.lastCheck.timestamp)}
               </div>
-              {data.status !== "offline" && data.lastCheck.responseTimeMs > 0 && (
-                <div className="border border-sigaa-border-default px-3 py-1.5 bg-sigaa-background rounded-sm">
-                  Tempo de resposta: {formatMs(data.lastCheck.responseTimeMs)}
-                </div>
-              )}
+              {data.status !== "offline" &&
+                data.lastCheck.responseTimeMs > 0 && (
+                  <div className="border border-sigaa-border-default px-3 py-1.5 bg-sigaa-background rounded-sm">
+                    Tempo de resposta: {formatMs(data.lastCheck.responseTimeMs)}
+                  </div>
+                )}
             </div>
           )}
 
-          {daysSinceLastIncident !== null && daysSinceLastIncident > 0 && data?.status !== "offline" && !error && (
-            <div className="mt-8 text-xs text-sigaa-muted font-bold uppercase tracking-wider">
-              Estamos a {daysSinceLastIncident} {daysSinceLastIncident === 1 ? "dia" : "dias"} sem incidentes registrados
-            </div>
-          )}
+          {daysSinceLastIncident !== null &&
+            daysSinceLastIncident > 0 &&
+            data?.status !== "offline" &&
+            !error && (
+              <div className="mt-8 text-xs text-sigaa-muted font-bold uppercase tracking-wider">
+                Estamos a {daysSinceLastIncident}{" "}
+                {daysSinceLastIncident === 1 ? "dia" : "dias"} sem incidentes
+                registrados
+              </div>
+            )}
         </div>
       </div>
     );
@@ -238,12 +334,19 @@ export function HeroStatus({ data, error, daysSinceLastIncident, incidents }: Pr
         )}
       </p>
 
-      {daysSinceLastIncident !== null && daysSinceLastIncident > 0 && data.status !== "offline" && (
-        <p className="mt-6 text-sm text-neutral-400">
-          Estamos ha <span className="font-semibold text-neutral-600">{daysSinceLastIncident} {daysSinceLastIncident === 1 ? "dia" : "dias"}</span> sem o SIGAA cair
-          <span className="ml-1 text-neutral-300">#iLoveSigaa</span>
-        </p>
-      )}
+      {daysSinceLastIncident !== null &&
+        daysSinceLastIncident > 0 &&
+        data.status !== "offline" && (
+          <p className="mt-6 text-sm text-neutral-400">
+            Estamos ha{" "}
+            <span className="font-semibold text-neutral-600">
+              {daysSinceLastIncident}{" "}
+              {daysSinceLastIncident === 1 ? "dia" : "dias"}
+            </span>{" "}
+            sem o SIGAA cair
+            <span className="ml-1 text-neutral-300">#iLoveSigaa</span>
+          </p>
+        )}
 
       <p className="text-xs text-neutral-400 mt-4">
         Ultimo check: {timeAgo(data.lastCheck.timestamp)}
