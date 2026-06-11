@@ -27,7 +27,7 @@ const ONLINE_RESPONSES = [
   /* World Cup */
   { emoji: "🇧🇷⚽", text: "Nao, ta firme!",        sub: "Aguentou o gol, o VAR e a revisao." },
   { emoji: "🏆🇧🇷", text: "Nao, ta de pe!",         sub: "Sobreviveu ate a prorrogacao." },
-  { emoji: "⚽✅",   text: "Nao, fez o gol!",        sub: "Chutou no angulo e foi. Penta SIGAA!" },
+  { emoji: "⚽✅",   text: "Nao, fez o gol!",        sub: "Chutou no angulo e foi. GOLACO!"},
   { emoji: "🇧🇷🏃", text: "Nao, driblou tudo!",     sub: "Passou por cima da instabilidade e ta no ar." },
   { emoji: "🏟️🇧🇷", text: "Nao, escalado hoje!",    sub: "Saiu como titular e ta rendendo." },
   { emoji: "🇧🇷🎺", text: "Nao!",                   sub: "Nem a vuvuzela desafinou o servidor hoje." },
