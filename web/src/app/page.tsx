@@ -135,6 +135,25 @@ export default function Home() {
               </a>
             </span>
           </div>
+          <div className="flex flex-col items-center gap-1">
+            <p>Esse sigaacaiu e da UFG. Procurando por outros? Acesse abaixo:</p>
+            <a
+              href="https://sigaacaiu.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-neutral-400 hover:text-neutral-600 transition-colors"
+            >
+              UFPB
+            </a>
+            <a
+              href="https://unb.sigaacaiu.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-neutral-400 hover:text-neutral-600 transition-colors"
+            >
+              UNB
+            </a>
+          </div>
         </footer>
       </section>
     </>
