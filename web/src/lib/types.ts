@@ -90,6 +90,8 @@ export interface OtherServicesHistoryCheck {
   timestamp: string;
   ru_ms: number | null;
   sophia_ms: number | null;
+  moodle_ms: number | null;
+  turing_ms: number | null;
 }
 
 export interface OtherServicesHistoryResponse {

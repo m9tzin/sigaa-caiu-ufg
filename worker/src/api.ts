@@ -136,7 +136,13 @@ function bucketTs(ts: string, bucketMinutes: number): string {
 function pivotOtherServiceRows(
   rows: RawOtherServiceRow[],
   bucketMinutes: number
-): { timestamp: string; ru_ms: number | null; sophia_ms: number | null }[] {
+): {
+  timestamp: string;
+  ru_ms: number | null;
+  sophia_ms: number | null;
+  moodle_ms: number | null;
+  turing_ms: number | null;
+}[] {
   const buckets = new Map<string, Record<string, { sum: number; count: number }>>();
 
   for (const row of rows) {
@@ -155,6 +161,8 @@ function pivotOtherServiceRows(
       timestamp: ts,
       ru_ms: b.ru_ms ? Math.round(b.ru_ms.sum / b.ru_ms.count) : null,
       sophia_ms: b.sophia_ms ? Math.round(b.sophia_ms.sum / b.sophia_ms.count) : null,
+      moodle_ms: b.moodle_ms ? Math.round(b.moodle_ms.sum / b.moodle_ms.count) : null,
+      turing_ms: b.turing_ms ? Math.round(b.turing_ms.sum / b.turing_ms.count) : null,
     }));
 }
 
