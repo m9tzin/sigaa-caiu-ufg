@@ -21,6 +21,8 @@ type Period = "24h" | "7d" | "30d";
 const SERVICES = [
   { key: "ru_ms" as const, label: "Site do RU", color: "#f97316" },
   { key: "sophia_ms" as const, label: "Biblioteca", color: "#3b82f6" },
+  { key: "moodle_ms" as const, label: "Moodle", color: "#8b5cf6" },
+  { key: "turing_ms" as const, label: "Plataforma Turing", color: "#14b8a6" },
 ];
 
 function formatTime(timestamp: string, period: Period): string {
@@ -56,6 +58,8 @@ export function OtherServicesChart() {
     time: formatTime(c.timestamp, period),
     ru_ms: c.ru_ms,
     sophia_ms: c.sophia_ms,
+    moodle_ms: c.moodle_ms,
+    turing_ms: c.turing_ms,
   }));
 
   const activeServices = SERVICES.filter(s => data.some(d => d[s.key] != null));

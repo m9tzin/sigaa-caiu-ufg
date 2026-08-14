@@ -3,6 +3,8 @@ import type { OtherServiceDef, OtherServiceCheckResult, Status } from "./types";
 export const OTHER_SERVICES: OtherServiceDef[] = [
   { id: "ru", name: "Site do RU", url: "https://ru-ufg.web.ufg.br/login" },
   { id: "sophia", name: "Biblioteca (Sophia)", url: "https://sophia.bc.ufg.br/" },
+  { id: "moodle", name: "Moodle (EAD UFG)", url: "https://ead.ufg.br/" },
+  { id: "turing", name: "Plataforma Turing", url: "https://turing.inf.ufg.br/login/index.php?loginredirect=1" },
 ];
 
 const TIMEOUT_MS = 15_000;
