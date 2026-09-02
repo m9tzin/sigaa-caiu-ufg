@@ -142,13 +142,7 @@ function bucketTs(ts: string, bucketMinutes: number): string {
 function pivotOtherServiceRows(
   rows: OtherServiceHistoryRow[],
   bucketMinutes: number
-): {
-  timestamp: string;
-  ru_ms: number | null;
-  sophia_ms: number | null;
-  moodle_ms: number | null;
-  turing_ms: number | null;
-}[] {
+): Record<string, string | number | null>[] {
   const buckets = new Map<string, Record<string, { sum: number; count: number }>>();
 
   for (const row of rows) {
@@ -161,14 +155,19 @@ function pivotOtherServiceRows(
     b[key].count += row.n_response;
   }
 
+  // Derived from OTHER_SERVICES so porting a new service list (as in the sibling
+  // repo's matriculaweb/bce port) is a zero-line change here: no per-service line to
+  // remember the `&& b.X.count > 0` guard on. A service with no timed samples in a
+  // bucket -- b[key] undefined, or count 0 -- must come back null rather than NaN or a
+  // depressed average toward 0 (Ruling 9).
+  const avg = (b: Record<string, { sum: number; count: number }>, key: string): number | null =>
+    b[key] && b[key].count > 0 ? Math.round(b[key].sum / b[key].count) : null;
+
   return Array.from(buckets.entries())
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([ts, b]) => ({
       timestamp: ts,
-      ru_ms: b.ru_ms && b.ru_ms.count > 0 ? Math.round(b.ru_ms.sum / b.ru_ms.count) : null,
-      sophia_ms: b.sophia_ms && b.sophia_ms.count > 0 ? Math.round(b.sophia_ms.sum / b.sophia_ms.count) : null,
-      moodle_ms: b.moodle_ms && b.moodle_ms.count > 0 ? Math.round(b.moodle_ms.sum / b.moodle_ms.count) : null,
-      turing_ms: b.turing_ms && b.turing_ms.count > 0 ? Math.round(b.turing_ms.sum / b.turing_ms.count) : null,
+      ...Object.fromEntries(OTHER_SERVICES.map(s => [`${s.id}_ms`, avg(b, `${s.id}_ms`)])),
     }));
 }
 
