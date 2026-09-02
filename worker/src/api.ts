@@ -165,10 +165,10 @@ function pivotOtherServiceRows(
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([ts, b]) => ({
       timestamp: ts,
-      ru_ms: b.ru_ms ? Math.round(b.ru_ms.sum / b.ru_ms.count) : null,
-      sophia_ms: b.sophia_ms ? Math.round(b.sophia_ms.sum / b.sophia_ms.count) : null,
-      moodle_ms: b.moodle_ms ? Math.round(b.moodle_ms.sum / b.moodle_ms.count) : null,
-      turing_ms: b.turing_ms ? Math.round(b.turing_ms.sum / b.turing_ms.count) : null,
+      ru_ms: b.ru_ms && b.ru_ms.count > 0 ? Math.round(b.ru_ms.sum / b.ru_ms.count) : null,
+      sophia_ms: b.sophia_ms && b.sophia_ms.count > 0 ? Math.round(b.sophia_ms.sum / b.sophia_ms.count) : null,
+      moodle_ms: b.moodle_ms && b.moodle_ms.count > 0 ? Math.round(b.moodle_ms.sum / b.moodle_ms.count) : null,
+      turing_ms: b.turing_ms && b.turing_ms.count > 0 ? Math.round(b.turing_ms.sum / b.turing_ms.count) : null,
     }));
 }
 
