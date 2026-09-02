@@ -93,7 +93,31 @@ function liveObjects(db) {
   try {
     stdout = execFileSync("npx", args, { cwd: workerDir, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
   } catch (error) {
-    console.error("erro ao consultar o banco:\n" + (error.stderr || error.message));
+    // wrangler splits its output between the two streams depending on what went wrong,
+    // and an auth failure can land entirely on stdout -- so print both, or the failure
+    // is unreadable in CI.
+    const output = `${error.stdout ?? ""}${error.stderr ?? ""}`;
+    console.error("erro ao consultar o banco:");
+    console.error(`  comando: npx ${args.join(" ")}`);
+    console.error(`  status:  ${error.status ?? "?"}`);
+    if (output.trim()) console.error(output);
+    else console.error(`  ${error.message}`);
+
+    // The token a deploy needs and the token this check needs are not the same. A
+    // token scoped only to Workers Scripts:Edit deploys fine and cannot read D1, which
+    // surfaces as 7403 rather than as anything mentioning permissions.
+    if (/\b7403\b|not authorized to access this service/i.test(output)) {
+      console.error(
+        "\nO token nao tem acesso a D1. Em Cloudflare > My Profile > API Tokens,\n" +
+        "adicione a permissao 'D1:Read' (ou 'D1:Edit') ao token usado aqui.\n" +
+        "Deploy de Worker e leitura de D1 sao permissoes distintas: o token pode\n" +
+        "publicar o worker e ainda assim nao conseguir consultar o banco.\n"
+      );
+    }
+
+    // Exit 2 means "could not check", which the caller must not confuse with exit 1,
+    // "checked and found drift". The workflow blocks on the second and warns on the
+    // first: a permissions gap should not take deployment down with it.
     process.exit(2);
   }
 
