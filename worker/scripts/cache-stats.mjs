@@ -11,21 +11,31 @@
 
 import { spawn } from "node:child_process";
 
-// Rows scanned per cache miss, from the D1 audit. These are derived from the cron
-// cadence (480 checks/day) and the retention in schema.sql, not measured -- they turn
-// the hit counts into an order-of-magnitude "rows avoided", nothing more precise.
+// Rows read per cache miss. Measured against the remote database on 2026-09-02 by
+// running each route's own SQL through "wrangler d1 execute --json" and reading
+// meta.rows_read -- the previous values here were derived from the cron cadence and
+// were off by up to 2x in both directions.
+//
+// A route's figure is the sum over every statement it issues: /api/stats runs two
+// queries per period across four periods, /api/status runs one lastN plus one open
+// incident plus one per layer.
+//
+// These drift as the table grows (~480 checks/day, and other_service_checks at 4x
+// that). The windowed routes track their window rather than the table, so they are
+// stable once the window is older than the data; the 90d figures still climb until
+// retention catches up. Re-measure before trusting them to two significant figures.
 const ROWS_PER_MISS = {
-  "v1/api/status": 15, // after the partial layer indexes
-  "v1/api/other-services": 4, // after the batched per-service lookup
-  "v1/api/stats": 61_440,
+  "v1/api/status": 10, // 5 lastN + 1 open incident + 1 per layer, via the partial indexes
+  "v1/api/other-services": 4, // one indexed seek per service, batched
+  "v1/api/stats": 60_750,
   "v1/api/incidents": 10,
-  "v1/api/history/24h": 480,
-  "v1/api/history/7d": 3_360,
-  "v1/api/history/30d": 14_400,
-  "v1/api/history/90d": 43_200,
-  "v1/api/other-services/history/24h": 1_920,
-  "v1/api/other-services/history/7d": 13_440,
-  "v1/api/other-services/history/30d": 57_600,
+  "v1/api/history/24h": 356,
+  "v1/api/history/7d": 7_137,
+  "v1/api/history/30d": 29_194,
+  "v1/api/history/90d": 87_879, // bucketed: reads the index and the rows behind it
+  "v1/api/other-services/history/24h": 1_424,
+  "v1/api/other-services/history/7d": 12_976,
+  "v1/api/other-services/history/30d": 45_792,
   "v1/": 0,
 };
 
