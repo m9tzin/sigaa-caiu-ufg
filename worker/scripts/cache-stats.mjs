@@ -11,31 +11,40 @@
 
 import { spawn } from "node:child_process";
 
-// Rows read per cache miss. Measured against the remote database on 2026-09-02 by
-// running each route's own SQL through "wrangler d1 execute --json" and reading
-// meta.rows_read -- the previous values here were derived from the cron cadence and
-// were off by up to 2x in both directions.
+// Rows read per cache miss. Measured against the remote database on 2026-09-03,
+// straight after the rollup shipped, by running each route's own SQL through
+// "wrangler d1 execute --remote --json" and reading meta.rows_read.
 //
-// A route's figure is the sum over every statement it issues: /api/stats runs two
-// queries per period across four periods, /api/status runs one lastN plus one open
-// incident plus one per layer.
+// The aggregate routes now read pre-aggregated buckets instead of scanning their raw
+// window, which is where the reduction lives: /api/stats fell from 60,750 to ~118, and
+// the 30-day history from 29,194 to 698.
 //
-// These drift as the table grows (~480 checks/day, and other_service_checks at 4x
-// that). The windowed routes track their window rather than the table, so they are
-// stable once the window is older than the data; the 90d figures still climb until
-// retention catches up. Re-measure before trusting them to two significant figures.
+// The 24h routes are unchanged -- they return 3-minute points, the cron's own cadence,
+// so there is nothing to downsample -- and their figures are carried over from the
+// 2026-09-02 measurement rather than re-measured. A re-measurement taken today would
+// read low: the account had exhausted its daily row-read quota, so the cron could not
+// write checks for roughly five hours and the 24h window is missing about a fifth of
+// its rows. The carried-over numbers describe a healthy cron; today's would describe
+// the outage.
+//
+// 90d came in at 4,202 rather than the 2,160 buckets it groups: rows_read counts index
+// entries alongside table rows. Expect that multiplier on every figure here.
+//
+// These drift as the tables grow. Re-measure with "npm run rollup:parity", which prints
+// rows_read for both sides of every case, before trusting them to two significant
+// figures. The numbers are per database -- sigaa-caiu-unb has its own.
 const ROWS_PER_MISS = {
   "v1/api/status": 10, // 5 lastN + 1 open incident + 1 per layer, via the partial indexes
   "v1/api/other-services": 4, // one indexed seek per service, batched
-  "v1/api/stats": 60_750,
+  "v1/api/stats": 118, // 92 daily buckets + 8 hourly + 18 incidents, three statements
   "v1/api/incidents": 10,
-  "v1/api/history/24h": 356,
-  "v1/api/history/7d": 7_137,
-  "v1/api/history/30d": 29_194,
-  "v1/api/history/90d": 87_879, // bucketed: reads the index and the rows behind it
-  "v1/api/other-services/history/24h": 1_424,
-  "v1/api/other-services/history/7d": 12_976,
-  "v1/api/other-services/history/30d": 45_792,
+  "v1/api/history/24h": 356, // raw 3-minute points, unchanged
+  "v1/api/history/7d": 572, // '15m' buckets, read straight
+  "v1/api/history/30d": 698, // '1h' buckets, read straight
+  "v1/api/history/90d": 4_202, // '1h' buckets grouped 3:1 into 3-hour points
+  "v1/api/other-services/history/24h": 1_424, // raw, unchanged
+  "v1/api/other-services/history/7d": 2_285,
+  "v1/api/other-services/history/30d": 2_270,
   "v1/": 0,
 };
 
