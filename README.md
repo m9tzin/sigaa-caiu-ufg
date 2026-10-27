@@ -1,4 +1,4 @@
-# SIGAA Caiu? — UFG
+# SIGAA Caiu: UFG
 
 Monitor em tempo real do [SIGAA da UFG](https://sigaa.sistemas.ufg.br). Verifica automaticamente se o sistema esta no ar, lento ou fora do ar a cada 3 minutos.
 
