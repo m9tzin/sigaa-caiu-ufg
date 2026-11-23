@@ -4,3 +4,6 @@ SIGAA_MONITOR_USER=your_sigaa_username
 SIGAA_MONITOR_PASS=your_sigaa_password
 TELEGRAM_BOT_TOKEN=your_bot_token
 TELEGRAM_CHAT_ID=your_chat_id
+# Relay on the web project, used when sso.ufg.br answers Cloudflare with a 52x.
+SSO_PROBE_URL=https://ufg.sigaacaiu.com/api/sso-probe
+SSO_PROBE_SECRET=your_probe_secret

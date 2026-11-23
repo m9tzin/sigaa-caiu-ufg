@@ -30,8 +30,8 @@ export async function performHealthCheck(
   }
 
   const [portal, loginForm] = await Promise.all([
-    checkPortal(),
-    checkLoginForm(),
+    checkPortal(env),
+    checkLoginForm(env),
   ]);
 
   let loginE2e: LayerResult;
@@ -150,18 +150,36 @@ function determineReachabilityStatus(httpCode: number, responseTimeMs: number): 
 // UFG has no public SPA portal. Instead, verify the CAS/SSO service is reachable
 // and responding — students cannot log in if SSO is down even if SIGAA is up.
 
-async function checkPortal(): Promise<LayerResult> {
+// sso.ufg.br has refused Cloudflare egress since 2026-11-19: the Worker gets a 525 while every
+// other client gets the login page. On a Cloudflare-generated 52x we retry through the Vercel
+// probe so the layers measure the SSO itself rather than the path to it.
+async function fetchSsoPage(env: Env): Promise<{ status: number; body: string }> {
+  const res = await fetch(SSO_LOGIN_URL, {
+    redirect: "follow",
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+    headers: { "User-Agent": USER_AGENT },
+  });
+
+  const viaCloudflareError = res.status >= 520 && res.status <= 530;
+  if (!viaCloudflareError || !env.SSO_PROBE_URL || !env.SSO_PROBE_SECRET) {
+    return { status: res.status, body: await res.text() };
+  }
+
+  const probe = await fetch(env.SSO_PROBE_URL, {
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+    headers: { "User-Agent": USER_AGENT, "x-probe-secret": env.SSO_PROBE_SECRET },
+  });
+  const upstream = Number(probe.headers.get("x-upstream-status"));
+  if (!upstream) throw new Error(`sso_probe_http_${probe.status}`);
+  return { status: upstream, body: await probe.text() };
+}
+
+async function checkPortal(env: Env): Promise<LayerResult> {
   const start = Date.now();
   try {
-    const res = await fetch(SSO_LOGIN_URL, {
-      redirect: "follow",
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-      headers: { "User-Agent": USER_AGENT },
-    });
+    const { status, body } = await fetchSsoPage(env);
 
-    if (res.status !== 200) return { status: "offline", error: `sso_http_${res.status}`, responseTimeMs: Date.now() - start };
-
-    const body = await res.text();
+    if (status !== 200) return { status: "offline", error: `sso_http_${status}`, responseTimeMs: Date.now() - start };
 
     if (!body.includes('name="username"')) {
       return { status: "offline", error: "sso_missing_username_field", responseTimeMs: Date.now() - start };
@@ -178,18 +196,12 @@ async function checkPortal(): Promise<LayerResult> {
 // Verify the SSO form renders all required fields (username, password, execution token).
 // A missing execution token means CAS is degraded and cannot issue session tickets.
 
-async function checkLoginForm(): Promise<LayerResult> {
+async function checkLoginForm(env: Env): Promise<LayerResult> {
   const start = Date.now();
   try {
-    const res = await fetch(SSO_LOGIN_URL, {
-      redirect: "follow",
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-      headers: { "User-Agent": USER_AGENT },
-    });
+    const { status, body } = await fetchSsoPage(env);
 
-    if (res.status !== 200) return { status: "offline", error: `sso_form_http_${res.status}`, responseTimeMs: Date.now() - start };
-
-    const body = await res.text();
+    if (status !== 200) return { status: "offline", error: `sso_form_http_${status}`, responseTimeMs: Date.now() - start };
 
     if (!body.includes('name="username"') || !body.includes('name="password"')) {
       return { status: "offline", error: "sso_form_missing_credentials_fields", responseTimeMs: Date.now() - start };

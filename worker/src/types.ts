@@ -119,4 +119,6 @@ export interface Env {
   TELEGRAM_CHAT_ID?: string;
   SIGAA_MONITOR_USER?: string;
   SIGAA_MONITOR_PASS?: string;
+  SSO_PROBE_URL?: string;
+  SSO_PROBE_SECRET?: string;
 }

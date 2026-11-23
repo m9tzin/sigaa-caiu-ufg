@@ -86,6 +86,20 @@ altera tabela existente, entao essas continuam vindo dos `schema_migration_*.sql
 npx wrangler deploy
 ```
 
+### Probe do SSO (Cloudflare bloqueada)
+
+O `sso.ufg.br` recusa conexoes da Cloudflare desde 2026-11-19: o Worker recebe 525 nas
+camadas 2 e 3, e o monitor marcaria o SIGAA como fora do ar mesmo com ele no ar. Quando o
+SSO responde com um 52x, o Worker repete a requisicao por `/api/sso-probe` (projeto `web`,
+Vercel) e usa o status de la (`x-upstream-status`). Sem as duas variaveis abaixo o
+comportamento antigo continua, e o 525 aparece.
+
+```bash
+# mesmo valor no Vercel (web) como SSO_PROBE_SECRET
+npx wrangler secret put SSO_PROBE_SECRET
+npx wrangler secret put SSO_PROBE_URL   # https://ufg.sigaacaiu.com/api/sso-probe
+```
+
 ## Schema D1
 
 ```sql

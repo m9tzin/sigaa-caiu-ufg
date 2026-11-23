@@ -28,6 +28,8 @@ Frontend (Next.js no Vercel)
 
 > **Nota:** A UFG usa CAS/SSO (`sso.ufg.br`) para autenticacao. O check E2E de login (camada 4) nao e suportado pois o SSO enforca reCAPTCHA.
 
+> **Nota:** Desde 2026-11-19 o `sso.ufg.br` recusa conexoes vindas da Cloudflare (o Worker recebe HTTP 525 enquanto qualquer outro cliente recebe a tela de login). Quando isso acontece, as camadas 2 e 3 repetem a requisicao por `/api/sso-probe`, uma rota do frontend (Vercel) que busca o SSO de fora da Cloudflare.
+
 ## API Publica
 
 Base URL: `https://sigaa-caiu-ufg-worker.matheusmrno.workers.dev`
